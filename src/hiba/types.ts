@@ -5,7 +5,7 @@ export type CfHandler = Parameters<
 >;
 
 export type CfRequest = Request<unknown, IncomingRequestCfProperties<unknown>>;
-export type Result = Promise<Response> | Response;
+export type Result = Promise<Response>;
 export type RouteHandler = (c: Context) => Result;
 export type MiddlewareHandler = (c: Context, next: () => Result) => Result;
 

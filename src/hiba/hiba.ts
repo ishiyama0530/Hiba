@@ -13,7 +13,7 @@ const defaultErrorHandler: ErrorHandler = (err: unknown, c: Context) => {
   return new Response("Error", { status: 500 });
 };
 
-const execute = (
+const execute = async (
   index: number,
   c: Context,
   middlewares: MiddlewareHandler[],
@@ -44,11 +44,11 @@ export class Hiba {
     this.handleError = handler;
   }
 
-  get(path: string, handler: (c: Context) => Promise<Response> | Response) {
+  get(path: string, handler: (c: Context) => Result) {
     this.router.add("GET", path, handler);
   }
 
-  post(path: string, handler: (c: Context) => Promise<Response> | Response) {
+  post(path: string, handler: (c: Context) => Result) {
     this.router.add("POST", path, handler);
   }
 
@@ -56,7 +56,7 @@ export class Hiba {
     this.middlewares.push(handler);
   }
 
-  fetch: (request: CfRequest, env: Env, _: ExecutionContext) => Result = (
+  fetch: (request: CfRequest, env: Env, _: ExecutionContext) => Result = async (
     request,
     env,
   ) => {
@@ -68,7 +68,7 @@ export class Hiba {
 
     const c = new Context(request, env);
     try {
-      return execute(0, c, this.middlewares, routeHandler);
+      return await execute(0, c, this.middlewares, routeHandler);
     } catch (e) {
       return this.handleError(e, c);
     }
